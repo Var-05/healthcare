@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Secure Patient History</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <style>
+    body { font-family: sans-serif; background: #f5f5f5; padding: 40px; }
+    .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 15px rgba(0,0,0,0.2); }
+    input, button { width: 100%; margin: 10px 0; padding: 10px; }
+    #data { margin-top: 20px; }
+    body {
+      background: url('images/me.jpg') no-repeat center center fixed;
+      background-size: cover;
+      font-family: sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>View Encrypted Patient Data</h2>
+    <input type="password" id="secretKey" placeholder="Enter Owner Secret Key" />
+    <button onclick="decryptData()">Decrypt & View</button>
+
+    <div id="data" style="display: none;">
+      <h3>Patient Details</h3>
+      <p><strong>Name:</strong> <span id="name"></span></p>
+      <p><strong>Age:</strong> <span id="age"></span></p>
+      <p><strong>Date of Birth:</strong> <span id="dob"></span></p>
+      <p><strong>Problem:</strong> <span id="problem"></span></p>
+    </div>
+  </div>
+
+  <script>
+    function decryptData() {
+      const key = document.getElementById("secretKey").value;
+      const encrypted = localStorage.getItem("patientDataEncrypted");
+
+      if (!encrypted) {
+        alert("No encrypted data found.");
+        return;
+      }
+
+      try {
+        const bytes = CryptoJS.AES.decrypt(encrypted, key);
+        const decrypted = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+
+        document.getElementById("name").textContent = decrypted.name;
+        document.getElementById("age").textContent = decrypted.age;
+        document.getElementById("dob").textContent = decrypted.dob;
+        document.getElementById("problem").textContent = decrypted.problem;
+
+        document.getElementById("data").style.display = "block";
+      } catch (e) {
+        alert("Decryption failed! Wrong key or corrupt data.");
+      }
+    }
+  </script>
+</body>
+</html>

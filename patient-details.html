@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Patient Registration</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <style>
+    body { font-family: sans-serif; background: #eef; padding: 40px; }
+    .form-container { max-width: 400px; background: rgb(234, 216, 161); padding: 20px; border-radius: 8px; margin: auto; box-shadow: 0 0 10px #aaa; }
+    input, textarea, button { width: 100%; margin: 10px 0; padding: 8px; }
+    body {
+      background: url('images/reu.jpg') no-repeat center center fixed;
+      background-size: cover;
+      font-family: sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>Patient Registration</h2>
+    <input type="text" id="name" placeholder="Patient Name" required />
+    <input type="number" id="age" placeholder="Age" required />
+    <input type="date" id="dob" placeholder="Date of Birth" required />
+    <textarea id="problem" placeholder="Describe Problem" required></textarea>
+    <input type="password" id="secretKey" placeholder="Owner Secret Key" required />
+    <button onclick="saveEncrypted()">Submit</button>
+  </div>
+
+  <script>
+    function saveEncrypted() {
+      const name = document.getElementById("name").value;
+      const age = document.getElementById("age").value;
+      const dob = document.getElementById("dob").value;
+      const problem = document.getElementById("problem").value;
+      const key = document.getElementById("secretKey").value;
+
+      if (!name || !age || !dob || !problem || !key) {
+        alert("Please fill in all fields.");
+        return;
+      }
+
+      const data = JSON.stringify({ name, age, dob, problem });
+      const encrypted = CryptoJS.AES.encrypt(data, key).toString();
+
+      localStorage.setItem("patientDataEncrypted", encrypted);
+      alert("Patient data saved securely!");
+
+      window.location.href = "secure_patient_history.html"; // Redirect to secure view
+    }
+  </script>
+</body>
+</html>
